@@ -1,0 +1,48 @@
+name: GameHub Local Emulator Build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Compiling High-Performance IPA
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Setup Build Environment
+        run: |
+          mkdir -p GameHub
+          # (Your source code files are created here)
+          xcodegen generate
+
+      - name: Compile For ARM64 (Metal Optimized)
+        run: |
+          xcodebuild archive \
+            -project GameHub.xcodeproj \
+            -scheme GameHub \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath build/GameHub.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            OTHER_SWIFT_FLAGS="-D RELEASE_OPTIMIZED"
+
+      - name: Export Local IPA
+        run: |
+          mkdir -p build/Payload
+          cp -r build/GameHub.xcarchive/Products/Applications/*.app build/Payload/
+          cd build
+          zip -qr GameHub_Local_v2.ipa Payload
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GameHub-Local-Emulator
+          path: build/GameHub_Local_v2.ipa
