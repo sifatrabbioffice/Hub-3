@@ -1,22 +1,14 @@
 name: GameHub
 options:
-  bundleIdPrefix: com.gamehub.emulator
+  bundleIdPrefix: com.sifatrabbioffice
 targets:
   GameHub:
     type: application
     platform: iOS
     deploymentTarget: "17.0"
-    sources: [GameHub]
+    sources:
+      - GameHub
     settings:
-      base:
-        INFOPLIST_FILE: GameHub/Info.plist
-        GENERATE_INFOPLIST_FILE: NO
-        PRODUCT_BUNDLE_IDENTIFIER: com.gamehub.emulator.local
-        MARKETING_VERSION: 2.0
-        CURRENT_PROJECT_VERSION: 1
-        # Critical for local emulation performance
-        ENABLE_BITCODE: NO
-        ONLY_ACTIVE_ARCH: YES
-        SWIFT_OPTIMIZATION_LEVEL: "-O"
-        # Enabling JIT and Extended Virtual Addressing
-        "ENTITLEMENTS_ALLOWED": "YES"
+      # Fixes the SwiftUICore linking warning
+      ENABLE_USER_SCRIPT_SANDBOXING: NO
+      SWIFT_OPTIMIZATION_LEVEL: "-O"
